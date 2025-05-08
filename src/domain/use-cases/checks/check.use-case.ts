@@ -1,11 +1,12 @@
-import { LogEntity } from '../../entities/log.entity.ts';
+// import { LogEntity } from '../../entities/log.entity.ts';
 import { LogRepository } from '../../repositories/log.repository.ts';
+import { CreateLogUseCase } from '../logs/create-log.use-case.ts';
 
-interface CheckServiceUseCase {
+interface ICheckServiceUseCase {
   execute(url: string): Promise<boolean>;
 }
 
-export class CheckService implements CheckServiceUseCase {
+export class CheckUseCase implements ICheckServiceUseCase {
   private readonly name: string;
   private readonly onSuccess: undefined | ((response: Response) => void);
   private readonly onError: (error: unknown) => void;
@@ -39,7 +40,11 @@ export class CheckService implements CheckServiceUseCase {
         );
       }
 
-      const log = new LogEntity(`Service ${this.getName()} working`, 'low');
+      const log = new CreateLogUseCase({
+        name: `${this.name} Check Log`,
+        message: `${this.name} working`,
+        origin: import.meta.url.split('/').at(-1) ?? 'No file recognized'
+      }).execute();
       this.logRepository.saveLog(log);
 
       if (this.onSuccess) {
@@ -47,10 +52,12 @@ export class CheckService implements CheckServiceUseCase {
       }
       return true;
     } catch (error) {
-      const log = new LogEntity(
-        `Service ${this.getName()} NOT working: ${error}`,
-        'high'
-      );
+      const log = new CreateLogUseCase({
+        name: `${this.name} Danger Log`,
+        message: `${this.name} NOT working`,
+        level: 'high',
+        origin: import.meta.url.split('/').at(-1) ?? 'No file recognized'
+      }).execute();
       this.logRepository.saveLog(log);
 
       this.onError(error);

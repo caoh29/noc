@@ -3,7 +3,7 @@ import { CronJob } from 'cron';
 type CronTime = string | Date;
 type ticFunc = () => void;
 
-export class CronAdapter {
+export class CronService {
   private readonly cronJob: CronJob;
   private readonly cronTime: CronTime = '* * * * * *';
   private readonly ticFunc?: ticFunc;

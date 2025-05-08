@@ -5,7 +5,6 @@ import { LogEntity } from '../../domain/entities/log.entity.ts';
 
 import type { LogSeverityLevel } from '../../domain/entities/log.entity.ts';
 
-
 export class FileSystemDatasource implements LogDatasource {
   private readonly logPath = 'logs/';
   private readonly allLogsPath = 'logs/logs-all.log';

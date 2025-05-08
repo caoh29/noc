@@ -1,21 +1,29 @@
 export type LogSeverityLevel = 'low' | 'medium' | 'high';
 
+interface ILogEntity {
+  message: string;
+  level: LogSeverityLevel;
+  createdAt?: Date;
+  origin: string;
+}
+
 export class LogEntity {
   public level: LogSeverityLevel;
   public message: string;
   public createdAt: Date;
+  public origin: string;
 
-  constructor(message: string, level: LogSeverityLevel, createdAt?: Date) {
-    this.message = message;
-    this.level = level;
-    this.createdAt = createdAt ?? new Date();
+  constructor(config: ILogEntity) {
+    this.message = config.message;
+    this.level = config.level;
+    this.origin = config.origin;
+    this.createdAt = config.createdAt ?? new Date();
   }
 
-  //"{ "level": "high", "message":"Hola Mundo", "createdAt":"128937TZ12378123" }"
-  static fromJson = (json: string): LogEntity => {
-    const { message, level, createdAt } = JSON.parse(json);
+  public static fromJson = (json: string): LogEntity => {
+    const { message, level, createdAt, origin } = JSON.parse(json);
 
-    const log = new LogEntity(message, level, createdAt);
+    const log = new LogEntity({ message, level, createdAt, origin });
 
     return log;
   };

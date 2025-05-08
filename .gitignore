@@ -6,3 +6,6 @@ dist
 outputs
 tests/coverage
 logs
+.env
+
+credentials.csv
