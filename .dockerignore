@@ -1,0 +1,15 @@
+node_modules
+.env
+.env.template
+dist
+logs
+.qodo
+.prettierrc
+credentials.csv
+eslint.config.js
+jest.config.js
+tsconfig.json
+nodemon.json
+package-lock.json
+package.json
+.gitignore

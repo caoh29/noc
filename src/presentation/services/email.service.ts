@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { LogRepositoryImplementation } from '../../infrastructure/repositories/log.repository.implementation.ts';
-import { CreateLogUseCase } from '../../domain/use-cases/logs/create-log.use-case.ts';
+import { CreateLogUseCase } from '../../application/use-cases/log/create-log.use-case.ts';
 // import { Attachment } from 'nodemailer/lib/mailer/index.js';
 
 interface IEmailService {
@@ -37,9 +37,9 @@ export class EmailService {
   private readonly user: string;
   private readonly password: string;
   private mailer: nodemailer.Transporter | undefined;
-  private readonly logRepository?: LogRepositoryImplementation;
+  private readonly logRepository?: LogRepositoryImplementation[];
 
-  constructor(config: IEmailService, repository?: LogRepositoryImplementation) {
+  constructor(config: IEmailService, repository?: LogRepositoryImplementation[]) {
     if (config.host) this.host = config.host;
     if (config.port) this.port = config.port;
     if (this.port === 465) this.secure = true;
@@ -65,7 +65,11 @@ export class EmailService {
     });
   }
 
-  public async sendEmail({ headers, body, attachments = [] }: ISendEmailOptions): Promise<boolean> {
+  public async sendEmail({
+    headers,
+    body,
+    attachments = []
+  }: ISendEmailOptions): Promise<boolean> {
     if (!this.mailer) return false;
     try {
       await this.mailer.sendMail({
@@ -80,9 +84,9 @@ export class EmailService {
         const log = new CreateLogUseCase({
           name: `${this.name} Check Log`,
           message: `${this.name} working`,
-          origin: import.meta.url.split('/').at(-1) ?? 'No file recognized'
+          origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
         }).execute();
-        this.logRepository.saveLog(log);
+        Promise.all(this.logRepository.map((repo) => repo.saveLog(log)));
       }
 
       return true;
@@ -94,9 +98,9 @@ export class EmailService {
           name: `${this.name} Danger Log`,
           message: `${this.name} NOT working: ${error}`,
           level: 'high',
-          origin: import.meta.url.split('/').at(-1) ?? 'No file recognized'
+          origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
         }).execute();
-        this.logRepository.saveLog(log);
+        Promise.all(this.logRepository.map((repo) => repo.saveLog(log)));
       }
 
       return false;

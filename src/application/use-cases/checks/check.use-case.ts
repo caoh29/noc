@@ -1,29 +1,37 @@
 // import { LogEntity } from '../../entities/log.entity.ts';
-import { LogRepository } from '../../repositories/log.repository.ts';
-import { CreateLogUseCase } from '../logs/create-log.use-case.ts';
+import { LogRepository } from '../../../domain/repositories/log.repository.ts';
+import { CreateLogUseCase } from '../log/create-log.use-case.ts';
+import { SaveLogUseCase } from '../log/save-log.use-case.ts';
 
 interface ICheckServiceUseCase {
   execute(url: string): Promise<boolean>;
+}
+
+interface CheckServiceUseCaseProps {
+  name: string;
+  onError: (error: unknown) => void;
+  onSuccess?: (response: Response) => void;
+  logRepository: LogRepository[];
 }
 
 export class CheckUseCase implements ICheckServiceUseCase {
   private readonly name: string;
   private readonly onSuccess: undefined | ((response: Response) => void);
   private readonly onError: (error: unknown) => void;
-  private readonly logRepository: LogRepository;
+  private readonly logRepository: LogRepository[];
 
-  public constructor(
-    name: string,
-    logRepository: LogRepository,
-    onError: (error: unknown) => void,
-    onSuccess?: (res: Response) => void
-  ) {
+  public constructor({
+    name,
+    onError,
+    onSuccess,
+    logRepository
+  }: CheckServiceUseCaseProps) {
     this.name = name;
     this.onError = onError;
-    this.logRepository = logRepository;
     if (onSuccess) {
       this.onSuccess = onSuccess;
     }
+    this.logRepository = logRepository;
   }
 
   public getName() {
@@ -43,9 +51,11 @@ export class CheckUseCase implements ICheckServiceUseCase {
       const log = new CreateLogUseCase({
         name: `${this.name} Check Log`,
         message: `${this.name} working`,
-        origin: import.meta.url.split('/').at(-1) ?? 'No file recognized'
+        origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
       }).execute();
-      this.logRepository.saveLog(log);
+
+      const saveLogUseCase = new SaveLogUseCase(log, this.logRepository);
+      await saveLogUseCase.execute();
 
       if (this.onSuccess) {
         this.onSuccess(response);
@@ -56,9 +66,11 @@ export class CheckUseCase implements ICheckServiceUseCase {
         name: `${this.name} Danger Log`,
         message: `${this.name} NOT working`,
         level: 'high',
-        origin: import.meta.url.split('/').at(-1) ?? 'No file recognized'
+        origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
       }).execute();
-      this.logRepository.saveLog(log);
+
+      const saveLogUseCase = new SaveLogUseCase(log, this.logRepository);
+      await saveLogUseCase.execute();
 
       this.onError(error);
       return false;

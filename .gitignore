@@ -5,7 +5,9 @@ dist
 .vscode
 outputs
 tests/coverage
-logs
 .env
+logs
 
+mongodb
+postgresql
 credentials.csv
