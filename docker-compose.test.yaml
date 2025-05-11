@@ -11,7 +11,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
-      - ./mongodb:/data/db
+      - ./mongodb-test:/data/db
 
   postgres:
     image: postgres
@@ -23,4 +23,4 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB_NAME}
     volumes:
-      - ./postgresql:/var/lib/postgresql/data
+      - ./postgresql-test:/var/lib/postgresql/data

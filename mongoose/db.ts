@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export type MongoConnection = Promise<typeof mongoose>;
+export type MongoConnection = typeof mongoose;
 
 interface ConnectionOptions {
   url: string;
@@ -21,7 +21,7 @@ export class MongoDatabase {
   async connect({ url, dbName }: ConnectionOptions) {
     if (!this.connection) {
       try {
-        this.connection = mongoose.connect(url, {
+        this.connection = await mongoose.connect(url, {
           dbName,
         });
         console.log('Mongo connected!');

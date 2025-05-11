@@ -1,9 +1,8 @@
 import nodemailer from 'nodemailer';
 import { LogRepositoryImplementation } from '../../infrastructure/repositories/log.repository.implementation.ts';
 import { CreateLogUseCase } from '../../application/use-cases/log/create-log.use-case.ts';
-// import { Attachment } from 'nodemailer/lib/mailer/index.js';
 
-interface IEmailService {
+export interface IEmailService {
   host?: string;
   port?: number;
   service?: string;
@@ -13,7 +12,7 @@ interface IEmailService {
   };
 }
 
-interface ISendEmailOptions {
+export interface ISendEmailOptions {
   headers: {
     name: string;
     to: string | string[];
@@ -84,7 +83,7 @@ export class EmailService {
         const log = new CreateLogUseCase({
           name: `${this.name} Check Log`,
           message: `${this.name} working`,
-          origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
+          origin: import.meta.filename ?? 'no-origin'
         }).execute();
         Promise.all(this.logRepository.map((repo) => repo.saveLog(log)));
       }
@@ -98,7 +97,7 @@ export class EmailService {
           name: `${this.name} Danger Log`,
           message: `${this.name} NOT working: ${error}`,
           level: 'high',
-          origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
+          origin: import.meta.filename ?? 'no-origin'
         }).execute();
         Promise.all(this.logRepository.map((repo) => repo.saveLog(log)));
       }

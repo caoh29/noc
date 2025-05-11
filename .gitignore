@@ -9,5 +9,7 @@ tests/coverage
 logs
 
 mongodb
+mongodb-test
 postgresql
+postgresql-test
 credentials.csv

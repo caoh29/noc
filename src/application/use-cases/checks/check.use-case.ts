@@ -51,7 +51,7 @@ export class CheckUseCase implements ICheckServiceUseCase {
       const log = new CreateLogUseCase({
         name: `${this.name} Check Log`,
         message: `${this.name} working`,
-        origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
+        origin: import.meta.filename ?? 'no-origin'
       }).execute();
 
       const saveLogUseCase = new SaveLogUseCase(log, this.logRepository);
@@ -66,7 +66,7 @@ export class CheckUseCase implements ICheckServiceUseCase {
         name: `${this.name} Danger Log`,
         message: `${this.name} NOT working`,
         level: 'high',
-        origin: import.meta.url.split('/').at(-1) ?? 'no-origin'
+        origin: import.meta.filename ?? 'no-origin'
       }).execute();
 
       const saveLogUseCase = new SaveLogUseCase(log, this.logRepository);
