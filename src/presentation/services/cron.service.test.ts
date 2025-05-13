@@ -4,8 +4,8 @@ describe('CronService', () => {
   const mockTick = jest.fn();
 
   test('should create a job', (done) => {
-
     const job = new CronService(mockTick, '* * * * * *');
+    job.startJob();
 
     setTimeout(() => {
       expect(mockTick).toHaveBeenCalledTimes(2);

@@ -1,8 +1,8 @@
-import { LogEntity, LogSeverityLevel } from './log.entity';
+import { LogEntity, LogSeverityLevel } from './log.entity.ts';
 
 describe('LogEntity', () => {
   const dataObj = {
-    message: 'Hola Mundo',
+    message: 'Welcome to the jungle',
     level: 'low' as LogSeverityLevel,
     origin: 'log.entity.test.ts'
   }
@@ -15,7 +15,7 @@ describe('LogEntity', () => {
     expect(log.message).toBe(dataObj.message);
     expect(log.level).toBe(dataObj.level);
     expect(log.origin).toBe(dataObj.origin);
-    expect(log.createdAt).toBeDateString();
+    expect(log.createdAt).toBeDate();
   });
 
   test('should create a LogEntity instance from json', () => {

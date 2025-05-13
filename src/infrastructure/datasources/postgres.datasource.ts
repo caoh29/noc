@@ -5,6 +5,14 @@ import type { LogSeverityLevel } from '../../domain/entities/log.entity.ts';
 
 import { PostgresDatabase } from '../../../prisma/db.ts';
 
+interface LogRecord {
+  id: number;
+  message: string;
+  origin: string;
+  level: LogSeverityLevel;
+  createdAt: Date;
+}
+
 export class PostgresLogDatasource implements LogDatasource {
   // constructor() { }
 
@@ -26,7 +34,7 @@ export class PostgresLogDatasource implements LogDatasource {
         level: severityLevel
       }
     })
-    return logs.map((log) => new LogEntity({
+    return logs.map((log: LogRecord) => new LogEntity({
       message: log.message,
       origin: log.origin,
       level: log.level,

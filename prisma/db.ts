@@ -1,12 +1,11 @@
-import { Prisma, PrismaClient } from '@prisma/client';
-// import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
 
 export type PostgresConnection = PrismaClient;
 
 export class PostgresDatabase {
   private static instance: PostgresDatabase;
   private readonly client: PrismaClient;
-  public readonly logModel: Prisma.LogModelDelegate;
+  public readonly logModel;
 
   private constructor() {
     this.client = new PrismaClient();

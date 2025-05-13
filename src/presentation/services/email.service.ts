@@ -84,6 +84,7 @@ export class EmailService {
           name: `${this.name} Check Log`,
           message: `${this.name} working`,
           origin: import.meta.filename ?? 'no-origin'
+          // origin: __filename ?? 'no-origin'
         }).execute();
         Promise.all(this.logRepository.map((repo) => repo.saveLog(log)));
       }
@@ -98,6 +99,7 @@ export class EmailService {
           message: `${this.name} NOT working: ${error}`,
           level: 'high',
           origin: import.meta.filename ?? 'no-origin'
+          // origin: __filename ?? 'no-origin'
         }).execute();
         Promise.all(this.logRepository.map((repo) => repo.saveLog(log)));
       }

@@ -11,7 +11,7 @@ describe('Pruebas en MongoLogDatasource', () => {
   const log = new LogEntity({
     level: 'medium',
     message: 'test message',
-    origin: 'mongo-log.datasource.test.ts'
+    origin: 'mongo.datasource.test.ts'
   })
 
 
@@ -29,30 +29,27 @@ describe('Pruebas en MongoLogDatasource', () => {
   })
 
   afterAll(async () => {
-
     mongoose.connection.close();
   })
 
 
   test('should create a log', async () => {
-
-    const logSpy = jest.spyOn(console, 'log');
-
+    const createSpy = jest.spyOn(mongoose.Model, 'create');
 
     await logDataSource.saveLog(log);
 
-    expect(logSpy).toHaveBeenCalled();
-    expect(logSpy).toHaveBeenCalledWith("Mongo Log created:", expect.any(String));
-
-
+    expect(createSpy).toHaveBeenCalled();
   });
 
   test('should get logs', async () => {
+    const findSpy = jest.spyOn(mongoose.Model, 'find');
 
     await logDataSource.saveLog(log);
     await logDataSource.saveLog(log);
 
     const logs = await logDataSource.getLogs('medium');
+
+    expect(findSpy).toHaveBeenCalled();
 
     expect(logs.length).toBe(2);
     expect(logs[0].level).toBe('medium');

@@ -1,29 +1,34 @@
 import nodemailer from 'nodemailer';
 import { EmailService, IEmailService, ISendEmailOptions } from './email.service.ts';
+import { envs } from '../../config/plugins/env.plugin.ts';
+import { LogRepositoryImplementation } from '../../infrastructure/repositories/log.repository.implementation.ts';
+import { FileSystemDatasource } from '../../infrastructure/datasources/file-system.datasource.ts';
 
 describe('EmailService', () => {
-  const mockSendMail = jest.fn();
+  const mockSendEmail = jest.fn();
 
   // Mock al createTransport
   nodemailer.createTransport = jest.fn().mockReturnValue({
-    sendMail: mockSendMail
+    sendMail: mockSendEmail
   });
 
-  const data: IEmailService = {
-    host: 'smtp.google.com',
-    port: 587,
+  const config: IEmailService = {
+    host: envs.MAILER_HOST,
+    port: envs.MAILER_PORT,
     auth: {
-      user: 'camilo@google.com',
-      pass: 'password'
+      user: envs.MAILER_EMAIL,
+      pass: envs.MAILER_SECRET_KEY
     }
   };
 
-  const emailService = new EmailService(data);
+  const repository = new LogRepositoryImplementation(new FileSystemDatasource());
+
+  const emailService = new EmailService(config, [repository]);
 
   test('should send email', async () => {
     const options: ISendEmailOptions = {
       headers: {
-        name: 'Camilo',
+        name: 'Adan Shank',
         to: 'camilo@google.com',
         subject: 'Test'
       },
@@ -31,41 +36,72 @@ describe('EmailService', () => {
     };
 
 
-    await emailService.sendEmail(options);
+    const wasSend = await emailService.sendEmail(options);
 
-    expect(mockSendMail).toHaveBeenCalledWith({
+    expect(wasSend).toBe(true);
+
+    expect(mockSendEmail).toHaveBeenCalledWith({
+      from: `"Adan Shank" <${envs.MAILER_EMAIL}>`,
+      to: 'camilo@google.com',
+      subject: 'Test',
+      html: '<h1>Test</h1>',
+      attachments: [],
+    });
+  });
+
+
+  test('should send email with attachements', async () => {
+    const options: ISendEmailOptions = {
       headers: {
+        name: 'Adan Shank',
         to: 'camilo@google.com',
         subject: 'Test'
       },
-      body: '<h1>Test</h1>'
+      body: '<h1>Test</h1>',
+      attachments: [
+        { filename: 'logs-all.log', path: './logs/logs-all.log' },
+        { filename: 'logs-high.log', path: './logs/logs-high.log' },
+        { filename: 'logs-medium.log', path: './logs/logs-medium.log' },
+      ]
+    };
+
+    const wasSend = await emailService.sendEmail(options);
+
+    expect(wasSend).toBe(true);
+
+    expect(mockSendEmail).toHaveBeenCalledWith({
+      from: `"Adan Shank" <${envs.MAILER_EMAIL}>`,
+      to: 'camilo@google.com',
+      subject: 'Test',
+      html: '<h1>Test</h1>',
+      attachments: expect.arrayContaining([
+        { filename: 'logs-all.log', path: './logs/logs-all.log' },
+        { filename: 'logs-high.log', path: './logs/logs-high.log' },
+        { filename: 'logs-medium.log', path: './logs/logs-medium.log' },
+      ])
     });
+  });
 
-    test('should send email with attachements', async () => {
+  test('should save log in repository', async () => {
+    const options: ISendEmailOptions = {
+      headers: {
+        name: 'Adan Shank',
+        to: 'camilo@google.com',
+        subject: 'Test'
+      },
+      body: '<h1>Test</h1>',
+      attachments: [
+        { filename: 'logs-all.log', path: './logs/logs-all.log' },
+        { filename: 'logs-high.log', path: './logs/logs-high.log' },
+        { filename: 'logs-medium.log', path: './logs/logs-medium.log' },
+      ]
+    };
 
-      const options: ISendEmailOptions = {
-        headers: {
-          name: 'Camilo',
-          to: 'camilo@google.com',
-          subject: 'Test'
-        },
-        body: '<h1>Test</h1>'
-      };
+    const wasSend = await emailService.sendEmail(options);
 
-      await emailService.sendEmail(options);
+    expect(wasSend).toBe(true);
 
-      expect(mockSendMail).toHaveBeenCalledWith({
-        headers: {
-          to: options.headers.to,
-          subject: options.headers.subject
-        },
-        body: expect.any(String),
-        attachments: expect.arrayContaining([
-          { filename: 'logs-all.log', path: './logs/logs-all.log' },
-          { filename: 'logs-high.log', path: './logs/logs-high.log' },
-          { filename: 'logs-medium.log', path: './logs/logs-medium.log' },
-        ])
-      });
-    });
+    expect(mockSendEmail).toHaveBeenCalled();
+
   });
 });

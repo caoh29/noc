@@ -7,11 +7,7 @@ logs
 .prettierrc
 credentials.csv
 eslint.config.js
-jest.config.js
-tsconfig.json
-nodemon.json
-package-lock.json
-package.json
+jest.config.ts
 .gitignore
 mongodb
 mongodb-test

@@ -5,14 +5,14 @@ import { EmailService } from './services/email.service.ts';
 
 import { LogRepositoryImplementation } from '../infrastructure/repositories/log.repository.implementation.ts';
 import { FileSystemDatasource } from '../infrastructure/datasources/file-system.datasource.ts';
-import { MongoLogDatasource } from '../infrastructure/datasources/mongo.datasource.ts';
-import { PostgresLogDatasource } from '../infrastructure/datasources/postgres.datasource.ts';
+// import { MongoLogDatasource } from '../infrastructure/datasources/mongo.datasource.ts';
+// import { PostgresLogDatasource } from '../infrastructure/datasources/postgres.datasource.ts';
 
 export class Server {
   // constructor() {}
 
-  private readonly postgresLogRepository = new LogRepositoryImplementation(new PostgresLogDatasource());
-  private readonly mongoLogRepository = new LogRepositoryImplementation(new MongoLogDatasource());
+  // private readonly postgresLogRepository = new LogRepositoryImplementation(new PostgresLogDatasource());
+  // private readonly mongoLogRepository = new LogRepositoryImplementation(new MongoLogDatasource());
   private readonly fileSystemLogRepository = new LogRepositoryImplementation(new FileSystemDatasource());
 
   private readonly mailer = new EmailService(
@@ -25,7 +25,8 @@ export class Server {
         pass: envs.MAILER_SECRET_KEY
       }
     },
-    [this.postgresLogRepository, this.mongoLogRepository, this.fileSystemLogRepository]
+    // [this.postgresLogRepository, this.mongoLogRepository, this.fileSystemLogRepository]
+    [this.fileSystemLogRepository]
   );
 
   run() {
@@ -39,21 +40,25 @@ export class Server {
             console.log(`Error: ${error}`);
             this.mailer.sendEmail({
               headers: {
-                name: 'Posts Service',
-                to: envs.MAILER_EMAIL,
-                subject: 'Posts Service Error'
+                name: `NOC ${envs.CHECK_SERVICE_NAME} Service`,
+                to: envs.MAILER_RECIPIENT,
+                subject: `${envs.CHECK_SERVICE_NAME} Service Error`
               },
-              body: `There was an error with the Posts Service: ${error}`,
+              body: `There was an error with the ${envs.CHECK_SERVICE_NAME} Service: ${error}`,
               attachments: [
                 { filename: 'logs-all.log', path: './logs/logs-all.log' }
               ]
             });
           },
-          logRepository: [this.postgresLogRepository, this.mongoLogRepository, this.fileSystemLogRepository]
+          onSuccess: () => {
+            console.log(`${envs.CHECK_SERVICE_URL} Working`);
+          },
+          // logRepository: [this.postgresLogRepository, this.mongoLogRepository, this.fileSystemLogRepository]
+          logRepository: [this.fileSystemLogRepository]
         }
       );
 
-      const isActive = await check.execute('http://localhost:3000/posts');
+      const isActive = await check.execute(envs.CHECK_SERVICE_URL);
 
       if (!isActive) console.log(`INACTIVE SERVICE: ${check.getName()}`);
     }, '*/10 * * * * *');

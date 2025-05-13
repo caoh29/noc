@@ -10,13 +10,12 @@ export class MongoLogDatasource implements LogDatasource {
   // constructor() {}
 
   async saveLog(newLog: LogEntity): Promise<void> {
-    const log = new LogModel({
+    await LogModel.create({
       message: newLog.message,
       origin: newLog.origin,
       level: newLog.level,
       createdAt: newLog.createdAt,
     });
-    await log.save();
   }
 
 

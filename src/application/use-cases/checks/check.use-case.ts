@@ -1,4 +1,3 @@
-// import { LogEntity } from '../../entities/log.entity.ts';
 import { LogRepository } from '../../../domain/repositories/log.repository.ts';
 import { CreateLogUseCase } from '../log/create-log.use-case.ts';
 import { SaveLogUseCase } from '../log/save-log.use-case.ts';
@@ -52,6 +51,7 @@ export class CheckUseCase implements ICheckServiceUseCase {
         name: `${this.name} Check Log`,
         message: `${this.name} working`,
         origin: import.meta.filename ?? 'no-origin'
+        // origin: __filename ?? 'no-origin'
       }).execute();
 
       const saveLogUseCase = new SaveLogUseCase(log, this.logRepository);
@@ -67,6 +67,7 @@ export class CheckUseCase implements ICheckServiceUseCase {
         message: `${this.name} NOT working`,
         level: 'high',
         origin: import.meta.filename ?? 'no-origin'
+        // origin: __filename ?? 'no-origin'
       }).execute();
 
       const saveLogUseCase = new SaveLogUseCase(log, this.logRepository);
