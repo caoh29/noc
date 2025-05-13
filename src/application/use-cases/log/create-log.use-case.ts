@@ -33,7 +33,7 @@ export class CreateLogUseCase implements ICreateLogUseCase {
     return new LogEntity({
       message: this.message,
       level: this.level,
-      origin: this.origin,
+      origin: this.origin
     });
   }
 }

@@ -24,7 +24,11 @@ export class LogRepositoryImplementation implements LogRepository {
     if (!severityLevel) {
       throw new Error('Severity level is required');
     }
-    if (severityLevel !== 'low' && severityLevel !== 'medium' && severityLevel !== 'high') {
+    if (
+      severityLevel !== 'low' &&
+      severityLevel !== 'medium' &&
+      severityLevel !== 'high'
+    ) {
       throw new Error('Severity level must be low, medium, or high');
     }
     return this.logDatasource.getLogs(severityLevel);

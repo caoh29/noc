@@ -1,5 +1,9 @@
 import nodemailer from 'nodemailer';
-import { EmailService, IEmailService, ISendEmailOptions } from './email.service.ts';
+import {
+  EmailService,
+  IEmailService,
+  ISendEmailOptions
+} from './email.service.ts';
 import { envs } from '../../config/plugins/env.plugin.ts';
 import { LogRepositoryImplementation } from '../../infrastructure/repositories/log.repository.implementation.ts';
 import { FileSystemDatasource } from '../../infrastructure/datasources/file-system.datasource.ts';
@@ -21,7 +25,9 @@ describe('EmailService', () => {
     }
   };
 
-  const repository = new LogRepositoryImplementation(new FileSystemDatasource());
+  const repository = new LogRepositoryImplementation(
+    new FileSystemDatasource()
+  );
 
   const emailService = new EmailService(config, [repository]);
 
@@ -35,7 +41,6 @@ describe('EmailService', () => {
       body: '<h1>Test</h1>'
     };
 
-
     const wasSend = await emailService.sendEmail(options);
 
     expect(wasSend).toBe(true);
@@ -45,10 +50,9 @@ describe('EmailService', () => {
       to: 'camilo@google.com',
       subject: 'Test',
       html: '<h1>Test</h1>',
-      attachments: [],
+      attachments: []
     });
   });
-
 
   test('should send email with attachements', async () => {
     const options: ISendEmailOptions = {
@@ -61,7 +65,7 @@ describe('EmailService', () => {
       attachments: [
         { filename: 'logs-all.log', path: './logs/logs-all.log' },
         { filename: 'logs-high.log', path: './logs/logs-high.log' },
-        { filename: 'logs-medium.log', path: './logs/logs-medium.log' },
+        { filename: 'logs-medium.log', path: './logs/logs-medium.log' }
       ]
     };
 
@@ -77,7 +81,7 @@ describe('EmailService', () => {
       attachments: expect.arrayContaining([
         { filename: 'logs-all.log', path: './logs/logs-all.log' },
         { filename: 'logs-high.log', path: './logs/logs-high.log' },
-        { filename: 'logs-medium.log', path: './logs/logs-medium.log' },
+        { filename: 'logs-medium.log', path: './logs/logs-medium.log' }
       ])
     });
   });
@@ -93,7 +97,7 @@ describe('EmailService', () => {
       attachments: [
         { filename: 'logs-all.log', path: './logs/logs-all.log' },
         { filename: 'logs-high.log', path: './logs/logs-high.log' },
-        { filename: 'logs-medium.log', path: './logs/logs-medium.log' },
+        { filename: 'logs-medium.log', path: './logs/logs-medium.log' }
       ]
     };
 
@@ -102,6 +106,5 @@ describe('EmailService', () => {
     expect(wasSend).toBe(true);
 
     expect(mockSendEmail).toHaveBeenCalled();
-
   });
 });

@@ -24,21 +24,23 @@ export class PostgresLogDatasource implements LogDatasource {
         level: newLog.level,
         createdAt: newLog.createdAt
       }
-    })
+    });
   }
-
 
   async getLogs(severityLevel: LogSeverityLevel): Promise<LogEntity[]> {
     const logs = await PostgresDatabase.getInstance().logModel.findMany({
       where: {
         level: severityLevel
       }
-    })
-    return logs.map((log: LogRecord) => new LogEntity({
-      message: log.message,
-      origin: log.origin,
-      level: log.level,
-      createdAt: log.createdAt,
-    }));
+    });
+    return logs.map(
+      (log: LogRecord) =>
+        new LogEntity({
+          message: log.message,
+          origin: log.origin,
+          level: log.level,
+          createdAt: log.createdAt
+        })
+    );
   }
 }

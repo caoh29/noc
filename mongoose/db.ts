@@ -10,7 +10,7 @@ export class MongoDatabase {
   private static instance: MongoDatabase;
   private connection: MongoConnection | null = null;
 
-  private constructor() { }
+  private constructor() {}
 
   static getInstance(): MongoDatabase {
     if (!MongoDatabase.instance) {
@@ -22,7 +22,7 @@ export class MongoDatabase {
     if (!this.connection) {
       try {
         this.connection = await mongoose.connect(url, {
-          dbName,
+          dbName
         });
         console.log('Mongo connected!');
       } catch (error) {
@@ -40,5 +40,4 @@ export class MongoDatabase {
       this.connection = null;
     }
   }
-
 }

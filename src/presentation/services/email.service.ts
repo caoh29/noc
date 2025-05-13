@@ -38,7 +38,10 @@ export class EmailService {
   private mailer: nodemailer.Transporter | undefined;
   private readonly logRepository?: LogRepositoryImplementation[];
 
-  constructor(config: IEmailService, repository?: LogRepositoryImplementation[]) {
+  constructor(
+    config: IEmailService,
+    repository?: LogRepositoryImplementation[]
+  ) {
     if (config.host) this.host = config.host;
     if (config.port) this.port = config.port;
     if (this.port === 465) this.secure = true;

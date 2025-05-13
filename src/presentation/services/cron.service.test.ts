@@ -12,5 +12,5 @@ describe('CronService', () => {
       job.stopJob();
       done();
     }, 2000);
-  })
-})
+  });
+});

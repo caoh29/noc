@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
 
 const logSchema = new mongoose.Schema({
-
   message: {
     type: String,
-    required: true,
+    required: true
   },
   origin: {
-    type: String,
+    type: String
   },
   level: {
     type: String,
@@ -17,10 +16,7 @@ const logSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: new Date()
-  },
-
+  }
 });
 
-
 export const LogModel = mongoose.model('Log', logSchema);
-

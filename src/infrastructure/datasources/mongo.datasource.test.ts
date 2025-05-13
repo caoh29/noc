@@ -5,33 +5,28 @@ import { LogModel } from '../../../mongoose/schema.ts';
 import { MongoLogDatasource } from './mongo.datasource.ts';
 import { LogEntity } from '../../domain/entities/log.entity.ts';
 
-
 describe('Pruebas en MongoLogDatasource', () => {
   const logDataSource = new MongoLogDatasource();
   const log = new LogEntity({
     level: 'medium',
     message: 'test message',
     origin: 'mongo.datasource.test.ts'
-  })
-
+  });
 
   beforeAll(async () => {
-
     await MongoDatabase.getInstance().connect({
       dbName: envs.MONGO_DB_NAME,
-      url: envs.MONGO_URL,
-    })
-
-  })
+      url: envs.MONGO_URL
+    });
+  });
 
   afterEach(async () => {
     await LogModel.deleteMany();
-  })
+  });
 
   afterAll(async () => {
     mongoose.connection.close();
-  })
-
+  });
 
   test('should create a log', async () => {
     const createSpy = jest.spyOn(mongoose.Model, 'create');

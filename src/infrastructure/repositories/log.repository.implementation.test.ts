@@ -4,15 +4,14 @@ import { LogRepositoryImplementation } from './log.repository.implementation.ts'
 describe('LogRepositoryImplementation', () => {
   const mockLogDatasource = {
     saveLog: jest.fn(),
-    getLogs: jest.fn(),
-  }
+    getLogs: jest.fn()
+  };
 
   const logRepository = new LogRepositoryImplementation(mockLogDatasource);
 
   beforeEach(() => {
     jest.clearAllMocks();
-  })
-
+  });
 
   test('saveLog should call the datasource with arguments', async () => {
     const log = { level: 'high', message: 'hola' } as LogEntity;
@@ -24,6 +23,6 @@ describe('LogRepositoryImplementation', () => {
     const lowSeverity = 'low';
 
     await logRepository.getLogs(lowSeverity);
-    expect(mockLogDatasource.getLogs).toHaveBeenCalledWith(lowSeverity)
+    expect(mockLogDatasource.getLogs).toHaveBeenCalledWith(lowSeverity);
   });
-})
+});

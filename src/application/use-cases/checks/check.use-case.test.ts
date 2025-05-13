@@ -1,5 +1,5 @@
-import { LogEntity } from "../../../domain/entities/log.entity.ts";
-import { CheckUseCase } from "./check.use-case.ts";
+import { LogEntity } from '../../../domain/entities/log.entity.ts';
+import { CheckUseCase } from './check.use-case.ts';
 
 describe('CheckUseCase', () => {
   const mockRepository = {
@@ -22,11 +22,9 @@ describe('CheckUseCase', () => {
     expect(checkUseCase).toBeInstanceOf(CheckUseCase);
   });
 
-
   test('should geat name of an instance of CheckUseCase', () => {
     expect(checkUseCase.getName()).toBe('Test');
   });
-
 
   test('should execute check on url provided', async () => {
     const isWorking = await checkUseCase.execute('https://google.com');
@@ -39,7 +37,9 @@ describe('CheckUseCase', () => {
   });
 
   test('should fail execute check on false url provided', async () => {
-    const isWorking = await checkUseCase.execute('https://anvkjnkvajnbnnujwvfgygv.com');
+    const isWorking = await checkUseCase.execute(
+      'https://anvkjnkvajnbnnujwvfgygv.com'
+    );
 
     expect(isWorking).toBe(false);
     expect(mockOnSuccess).not.toHaveBeenCalled();
@@ -47,5 +47,4 @@ describe('CheckUseCase', () => {
 
     expect(mockRepository.saveLog).toHaveBeenCalledWith(expect.any(LogEntity));
   });
-
-})
+});
